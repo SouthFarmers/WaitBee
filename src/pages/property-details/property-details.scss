@@ -1,0 +1,83 @@
+page-property-details {
+
+  .header-image {
+    background-image: url(https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=CoQBdwAAAFJSdUftCICbfwnWHa-O-JH6QXgR2JAPz1hzYSAVwteWSyQQKU_HGzPeOwzFc5DZRHeAJrtUqVqXK1ro3vvz6RHhPuKeGy28Gs-qFCuPDGGil934PzHt4XFurez7qCE65DhfH09G72b4Xb3n0ALEC6JsHcWymQEbeX04l0fAWc5REhDEP2vRKQtBSWBZSkzl2HB4GhTvnr4oQjWQ51N2xipTkhvVG5M9bg&key=AIzaSyD_SjvE2iNaEE8gjynWk9KLDJPvXMDrvNc);
+    height: 40vh;
+  }
+
+  .main-content {
+    padding: 20px;
+    background-color: white;
+    width: 100%;
+  }
+
+  .slideimg{
+    width: 100%;
+    height: 100%;
+  }
+
+  ion-img.img-loaded img {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .placecard{
+    min-height: 100px;
+    width: 100%;
+    margin-bottom: 10px;
+    margin-top: 20px;
+    margin-left: 2px !important;
+    margin-right: 1px !important;
+    text-align:center;
+    /*vertical-align: middle;*/
+    margin-top: 0px;
+    padding-top: 20px !important;
+    padding-left: 1px !important;
+    padding-right: 1px !important;
+    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0,0,0,0.22);
+    transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+  }
+
+  .fold {
+    overflow: initial;
+    white-space: initial;
+  }
+
+  #map {
+    width:100%;
+    height: 100%;
+  }
+
+  .mapitem{
+    min-height: 30.4rem;
+  }
+
+ #slides{
+   position: absolute;
+ }
+
+  .reviewcard{
+    min-height: 300px;
+    width: 100%;
+    height: 100%;
+    margin-bottom: 10px;
+    margin-top: 20px;
+    margin-left: 2px !important;
+    margin-right: 1px !important;
+    text-align:center;
+    /*vertical-align: middle;*/
+    margin-top: 0px;
+    padding-top: 20px !important;
+    padding-left: 1px !important;
+    padding-right: 1px !important;
+    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0,0,0,0.22);
+    transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+  }
+
+  .reviewtext{
+    font-size: medium;
+    font-style: normal;
+  }
+
+}
