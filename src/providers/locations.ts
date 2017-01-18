@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Http } from '@angular/http';
 import 'rxjs/add/operator/map';
+import {LoadingController} from "ionic-angular";
+import {Storage} from '@ionic/storage';
 
 /*
   Generated class for the Locations provider.
@@ -14,32 +16,58 @@ export class Locations {
   data: any;
   userlat:any;
   userlng:any;
-  constructor(public http: Http) {
+  radius:any;
+  sortby:any;
+  constructor(public http: Http, public loadingCtrl: LoadingController, public storage: Storage) {
+
 
   }
 
   load(type){
+    this.data = null;
+    this.storage.get('sort').then((val) => {
+      this.sortby = val;
+    })
+    this.storage.get('radius').then((val) => {
+      this.radius = val;
 
-      if(this.data){
-        return Promise.resolve(this.data);
-      }
+    let loader = this.loadingCtrl.create({
+      content: "Please wait..."
+    });
+    loader.present();
 
+
+      console.log("location");
       return new Promise(resolve => {
-
-        this.http.get('https://maps.googleapis.com/maps/api/place/nearbysearch/json?location='+this.userlat+','+this.userlng+'&radius=5000&type='+type+'&keyword=cruise&key=AIzaSyD_SjvE2iNaEE8gjynWk9KLDJPvXMDrvNc').map(res => res.json()).subscribe(data => {
+        console.log(this.radius);
+        this.http.get('https://maps.googleapis.com/maps/api/place/nearbysearch/json?location='+this.userlat+','+this.userlng+'&radius='+this.radius+'&type='+type+'&key=AIzaSyD_SjvE2iNaEE8gjynWk9KLDJPvXMDrvNc').map(res => res.json()).subscribe(data => {
 
           this.data = this.applyHaversine(data.results);
 
-          this.data.sort((locationA, locationB) => {
-            return locationA.distance - locationB.distance;
+          if(this.sortby == 'distance'){
+            this.data.sort((locationA, locationB) => {
+              return locationA.distance - locationB.distance;
+            });
+          }else{
+            this.data.sort((locationA, locationB) => {
+              return locationB.rating - locationA.rating;
+            });
+          }
+
+          resolve(this.data);
+          loader.dismissAll();
+        },
+          (err) =>{
+            loader.dismissAll();
           });
 
-          console.log(this.data);
-          resolve(this.data);
-        });
-
       });
+    })
+    if(this.data){
 
+      return Promise.resolve(this.data);
+
+    }
   }
 
   applyHaversine(locations){

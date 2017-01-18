@@ -1,8 +1,12 @@
 import { Component } from '@angular/core';
-import { NavController, NavParams,FabContainer } from 'ionic-angular';
+import { AlertController, NavController, NavParams,FabContainer, ModalController  } from 'ionic-angular';
 import { Locations } from '../../providers/locations';
 import {Geolocation} from 'ionic-native';
 import {PropertyDetailsPage} from "../property-details/property-details";
+import { ModalAutocompleteItems } from '../modal-autocomplete-items/modal-autocomplete-items';
+import {GoogleGetCordinates} from "../../providers/google-get-cordinates";
+import {Filters} from "../filters/filters";
+import {Storage} from "@ionic/storage";
 /*
   Generated class for the List page.
 
@@ -23,9 +27,13 @@ export class ListPage {
   mall:any;
   proptype:any = 'restaurant';
   searchTerm: string = '';
-  constructor(public navCtrl: NavController, public navParams: NavParams,public locations: Locations) {}
+  newlocation:any;
+  constructor(public navCtrl: NavController, public navParams: NavParams,public locations: Locations, public alertCtrl: AlertController,
+              public modalCtrl: ModalController,public getcordinates : GoogleGetCordinates, public storage: Storage) {}
 
   ionViewDidLoad() {
+    this.storage.set('radius', 5*1609.344);
+    this.storage.set('sort','distance');
     this.rest = document.getElementById('rest');
     this.theater = document.getElementById('theater');
     this.airport = document.getElementById('airport');
@@ -76,6 +84,7 @@ export class ListPage {
       this.proptype = 'shopping_mall';
       this.mall.style.backgroundColor = 'red';
     }
+
     this.locations.load(this.proptype);
   }
 
@@ -87,10 +96,32 @@ export class ListPage {
   }
 
   changeLocation(){
-
+    let modal = this.modalCtrl.create(ModalAutocompleteItems);
+    modal.onDidDismiss(data => {
+      if(data){
+        this.getcordinates.getcordinates(data.description)
+          .then(data => {
+            this.locations.userlat = data[0].geometry.location.lat;
+            this.locations.userlng = data[0].geometry.location.lng;
+            this.locations.load(this.proptype);
+          });
+      }
+    })
+    modal.present();
   }
 
   filterlocations() {
     this.locations.filterItems(this.searchTerm);
+  }
+
+  OpenSettings(){
+    let modal2 = this.modalCtrl.create(Filters);
+    modal2.onDidDismiss(data => {
+      this.storage.get('sort').then((val) => {
+        this.locations.load(this.proptype);
+        console.log(val);
+      })
+    })
+    modal2.present();
   }
 }

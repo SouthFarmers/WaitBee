@@ -1,5 +1,6 @@
 import { NgModule, ErrorHandler } from '@angular/core';
 import { IonicApp, IonicModule, IonicErrorHandler } from 'ionic-angular';
+import {Storage} from '@ionic/storage'
 import { MyApp } from './app.component';
 import { HomePage } from '../pages/home/home';
 import { MapPage } from '../pages/map/map';
@@ -10,6 +11,9 @@ import { Connectivity } from '../providers/connectivity';
 import { Details } from '../providers/details';
 import { ParallaxHeader } from '../components/parallax-header/parallax-header';
 import {PropertyDetailsPage} from "../pages/property-details/property-details";
+import {Filters} from "../pages/filters/filters";
+import { ModalAutocompleteItems } from '../pages/modal-autocomplete-items/modal-autocomplete-items';
+import {GoogleGetCordinates} from "../providers/google-get-cordinates";
 
 @NgModule({
   declarations: [
@@ -18,7 +22,9 @@ import {PropertyDetailsPage} from "../pages/property-details/property-details";
     ListPage,
     MapPage,
     PropertyDetailsPage,
-    ParallaxHeader
+    ParallaxHeader,
+    ModalAutocompleteItems,
+    Filters
   ],
   imports: [
     IonicModule.forRoot(MyApp, {
@@ -36,8 +42,10 @@ import {PropertyDetailsPage} from "../pages/property-details/property-details";
     HomePage,
     ListPage,
     PropertyDetailsPage,
-    MapPage
+    MapPage,
+    ModalAutocompleteItems,
+    Filters
   ],
-  providers: [{provide: ErrorHandler, useClass: IonicErrorHandler}, Locations, GoogleMaps, Connectivity, Details]
+  providers: [Locations, GoogleMaps, Connectivity, Details, GoogleGetCordinates,Storage]
 })
 export class AppModule {}

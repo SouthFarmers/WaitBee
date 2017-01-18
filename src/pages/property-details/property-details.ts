@@ -41,7 +41,7 @@ export class PropertyDetailsPage {
   loadinfo(){
     this.details.loadPlaceDetails(this.placeID)
       .then(data => {
-
+        console.log(data);
         this.reviews = data.reviews;
         this.placedetails = data;
         this.placename = data.name;
