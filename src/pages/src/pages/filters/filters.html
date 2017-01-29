@@ -1,0 +1,85 @@
+<ion-header>
+  <ion-navbar color="secondary">
+    <ion-buttons>
+      <button ion-button color="light" round (click)="dismiss()">Close</button>
+    </ion-buttons>
+    <ion-title>Filters</ion-title>
+    <ion-buttons end>
+      <button ion-button color="light" round (click)="save()">Done</button>
+    </ion-buttons>
+  </ion-navbar>
+</ion-header>
+
+<ion-content>
+
+  <ion-list radio-group [(ngModel)]="sortby" class="sort">
+
+    <ion-list-header>
+      Sort By
+    </ion-list-header>
+
+    <ion-item>
+      <ion-label>Distance</ion-label>
+      <ion-radio checked="true"  value="distance"></ion-radio>
+    </ion-item>
+
+    <ion-item>
+      <ion-label>Rating</ion-label>
+      <ion-radio value="rating"></ion-radio>
+    </ion-item>
+
+    <ion-item>
+      <ion-label>Less Wait Time</ion-label>
+      <ion-radio value="waittime"></ion-radio>
+    </ion-item>
+
+    <ion-item>
+      <ion-label>Recently Updated</ion-label>
+      <ion-radio value="recentlyupdated"></ion-radio>
+    </ion-item>
+
+  </ion-list>
+
+
+  <ion-list>
+    <ion-list-header>
+      Distance Radius
+      <ion-badge item-right>{{distance}}</ion-badge>
+    </ion-list-header>
+    <ion-item>
+      <ion-range min="0" max="15"  step="1" snaps="true" [(ngModel)]="distance" color="secondary">
+        <ion-label range-left>0</ion-label>
+        <ion-label range-right>15</ion-label>
+      </ion-range>
+    </ion-item>
+  </ion-list>
+
+  <ion-list>
+
+    <ion-item>
+      <ion-label>Show Open Only</ion-label>
+      <ion-checkbox [(ngModel)]="openonly"></ion-checkbox>
+    </ion-item>
+
+  </ion-list>
+
+
+  <ion-list radio-group [(ngModel)]="scale" class="sort">
+
+    <ion-list-header>
+      Show Distance in:
+    </ion-list-header>
+
+    <ion-item>
+      <ion-label>Miles</ion-label>
+      <ion-radio checked="true"  value="miles"></ion-radio>
+    </ion-item>
+
+    <ion-item>
+      <ion-label>Kilometers</ion-label>
+      <ion-radio value="km"></ion-radio>
+    </ion-item>
+
+  </ion-list>
+
+</ion-content>

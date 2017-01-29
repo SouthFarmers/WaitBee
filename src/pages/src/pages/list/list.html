@@ -1,0 +1,72 @@
+<ion-header>
+
+  <ion-navbar color="secondary">
+    <button ion-button menuToggle>
+      <ion-icon name="menu"></ion-icon>
+    </button>
+    <ion-title><img class="logoimg" src="assets/icon/icon.png"></ion-title>
+
+    <ion-buttons end>
+
+      <button ion-button icon-only (click)="OpenSettings()">
+        <ion-icon name="funnel"></ion-icon>
+      </button>
+
+      <button ion-button icon-only (click)="changeLocation()">
+        <ion-icon name="locate"></ion-icon>
+      </button>
+
+    </ion-buttons>
+
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content padding class="mainpage">
+
+  <ion-searchbar [(ngModel)]="searchTerm" (ionInput)="filterlocations($event)" placeholder="Search..."></ion-searchbar>
+  <ion-refresher (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content pullingIcon="arrow-dropdown"
+                           pullingText="Pull to refresh"
+                           refreshingSpinner="circles"
+                           refreshingText="Refreshing..."></ion-refresher-content>
+  </ion-refresher>
+
+
+
+  <ion-item *ngFor="let location of properties" (click)="itemTapped($event, location)" class="mainpage">
+
+    <ion-card  class="maincard" >
+      <ion-card-header>
+        <span class="fold"><b>{{location.name}}</b></span>
+      </ion-card-header>
+
+      <ion-card-content class="item item-text-wrap">
+        <ion-avatar item-left class="avatarheight">
+          <ion-icon name="pin">
+            <span *ngIf="scale == 'miles'">{{location.distance}} miles away</span>
+            <span *ngIf="scale == 'km'">{{location.distance}} km away</span>
+          </ion-icon>
+        </ion-avatar>
+        <span *ngIf="location.rating"><rating [(ngModel)]="location.rating" readOnly="true"></rating></span>
+        <span *ngIf="!location.permanently_closed && location.opening_hours">
+        <span *ngIf="location.opening_hours.open_now" class="openstatus">Open Now <br></span>
+        <span *ngIf="!location.opening_hours.open_now" class="closedstatus">Closed <br></span> </span>
+        <span class="vicinity">{{location.vicinity}}</span>
+      </ion-card-content>
+    </ion-card>
+
+  </ion-item>
+
+  <ion-fab bottom right auto-close-on-click-outside #fab>
+    <button ion-fab color="dark"><ion-icon name="arrow-dropup"></ion-icon></button>
+    <ion-fab-list side="top">
+      <button id="rest" ion-fab color="dark"(click)="changeProperty(fab, 1)"><ion-icon name="restaurant"></ion-icon><ion-label>Restaurant</ion-label></button>
+      <button id="theater" ion-fab color="dark" (click)="changeProperty(fab,2)"><ion-icon name="film"></ion-icon><ion-label>Theaters</ion-label></button>
+      <button id ="airport" ion-fab color="dark" (click)="changeProperty(fab,3)"><ion-icon name="jet"></ion-icon><ion-label>Airport</ion-label></button>
+      <button id="mall" ion-fab color="dark" (click)="changeProperty(fab,4)"><ion-icon name="cart"></ion-icon><ion-label>Shopping Mall</ion-label></button>
+    </ion-fab-list>
+  </ion-fab>
+
+</ion-content>
