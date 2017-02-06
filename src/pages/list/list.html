@@ -1,7 +1,10 @@
 <ion-header>
 
   <ion-navbar color="secondary">
-    <ion-title>Wait Bee</ion-title>
+    <button ion-button menuToggle>
+      <ion-icon name="menu"></ion-icon>
+    </button>
+    <ion-title><img class="logoimg" src="assets/icon/icon.png"></ion-title>
 
     <ion-buttons end>
 
@@ -32,7 +35,7 @@
 
 
 
-  <ion-item *ngFor="let location of locations.data" (click)="itemTapped($event, location)" class="mainpage">
+  <ion-item *ngFor="let location of properties" (click)="itemTapped($event, location)" class="mainpage">
 
     <ion-card  class="maincard" >
       <ion-card-header>
@@ -41,9 +44,12 @@
 
       <ion-card-content class="item item-text-wrap">
         <ion-avatar item-left class="avatarheight">
-          <ion-icon name="pin"> <span>{{location.distance}} miles away</span></ion-icon>
+          <ion-icon name="pin">
+            <span *ngIf="scale == 'miles'">{{location.distance}} miles away</span>
+            <span *ngIf="scale == 'km'">{{location.distance}} km away</span>
+          </ion-icon>
         </ion-avatar>
-        <span *ngIf="location.rating" class="errorLine">{{location.rating}}<br></span>
+        <span *ngIf="location.rating"><rating [(ngModel)]="location.rating" readOnly="true"></rating></span>
         <span *ngIf="!location.permanently_closed && location.opening_hours">
         <span *ngIf="location.opening_hours.open_now" class="openstatus">Open Now <br></span>
         <span *ngIf="!location.opening_hours.open_now" class="closedstatus">Closed <br></span> </span>

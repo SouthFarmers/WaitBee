@@ -1,18 +1,13 @@
-import { Component } from '@angular/core';
-import { AlertController, NavController, NavParams,FabContainer, ModalController  } from 'ionic-angular';
+import {Component} from '@angular/core';
+import { NavController,FabContainer, ModalController  } from 'ionic-angular';
 import { Locations } from '../../providers/locations';
 import {Geolocation} from 'ionic-native';
 import {PropertyDetailsPage} from "../property-details/property-details";
 import { ModalAutocompleteItems } from '../modal-autocomplete-items/modal-autocomplete-items';
 import {GoogleGetCordinates} from "../../providers/google-get-cordinates";
 import {Filters} from "../filters/filters";
-import {Storage} from "@ionic/storage";
-/*
-  Generated class for the List page.
+import {UserData} from "../../providers/user-data";
 
-  See http://ionicframework.com/docs/v2/components/#navigation for more info on
-  Ionic pages and navigation.
-*/
 @Component({
   selector: 'page-list',
   templateUrl: 'list.html'
@@ -20,29 +15,38 @@ import {Storage} from "@ionic/storage";
 
 export class ListPage {
 
-  fabcolor:any;
   rest:any;
   theater:any;
   airport:any;
   mall:any;
   proptype:any = 'restaurant';
   searchTerm: string = '';
-  newlocation:any;
-  constructor(public navCtrl: NavController, public navParams: NavParams,public locations: Locations, public alertCtrl: AlertController,
-              public modalCtrl: ModalController,public getcordinates : GoogleGetCordinates, public storage: Storage) {}
+  properties:any;
+  scale:any;
+  currentaddr: string="Your Location";
+
+  constructor(public navCtrl: NavController,
+              public locations: Locations,
+              public modalCtrl: ModalController,
+              public getcordinates : GoogleGetCordinates,
+              public userdata : UserData) {}
 
   ionViewDidLoad() {
-    this.storage.set('radius', 5*1609.344);
-    this.storage.set('sort','distance');
+
     this.rest = document.getElementById('rest');
     this.theater = document.getElementById('theater');
     this.airport = document.getElementById('airport');
     this.mall = document.getElementById('mall');
+    this.rest.style.backgroundColor = 'red';
+
+    this.userdata.getUserPrefs().then(data => {
+      this.scale = data[0].scale;
+    })
 
     Geolocation.getCurrentPosition().then((position) => {
       this.locations.userlat = position.coords.latitude;
       this.locations.userlng = position.coords.longitude;
-      this.locations.load(this.proptype);
+      this.loadLocationsCall();
     });
 
   }
@@ -50,7 +54,9 @@ export class ListPage {
   doRefresh(refresher) {
 
     setTimeout(() => {
+      this.loadLocationsCall();
       refresher.complete();
+
     }, 2000);
   }
 
@@ -59,7 +65,6 @@ export class ListPage {
       placeid: item.place_id
     });
   }
-
 
 
   changeProperty(fab: FabContainer, value) {
@@ -84,44 +89,57 @@ export class ListPage {
       this.proptype = 'shopping_mall';
       this.mall.style.backgroundColor = 'red';
     }
-
-    this.locations.load(this.proptype);
+    this.loadLocationsCall();
   }
 
   resetfabcolor(){
-    this.rest.style.backgroundColor= 'none';
-    this.theater.style.backgroundColor = 'none';
-    this.airport.style.backgroundColor = 'none';
-    this.mall.style.backgroundColor = 'none';
+   this.rest.style.backgroundColor= '#2c3e50';
+    this.theater.style.backgroundColor = '#2c3e50';
+    this.airport.style.backgroundColor = '#2c3e50';
+    this.mall.style.backgroundColor = '#2c3e50';
   }
 
   changeLocation(){
-    let modal = this.modalCtrl.create(ModalAutocompleteItems);
+    let modal = this.modalCtrl.create(ModalAutocompleteItems,{
+      currlocation:this.currentaddr
+    });
     modal.onDidDismiss(data => {
-      if(data){
+
+      if(data && data.description){
         this.getcordinates.getcordinates(data.description)
           .then(data => {
             this.locations.userlat = data[0].geometry.location.lat;
             this.locations.userlng = data[0].geometry.location.lng;
-            this.locations.load(this.proptype);
+            this.currentaddr = data[0].formatted_address;
           });
+      }else if(data && data.revert){
+        Geolocation.getCurrentPosition().then((position) => {
+          this.currentaddr = "Your Location";
+          this.locations.userlat = position.coords.latitude;
+          this.locations.userlng = position.coords.longitude;
+        });
       }
+      this.loadLocationsCall();
     })
     modal.present();
   }
 
   filterlocations() {
-    this.locations.filterItems(this.searchTerm);
+    this.properties = this.locations.filterItems(this.searchTerm);
   }
 
   OpenSettings(){
     let modal2 = this.modalCtrl.create(Filters);
     modal2.onDidDismiss(data => {
-      this.storage.get('sort').then((val) => {
-        this.locations.load(this.proptype);
-        console.log(val);
-      })
+      this.loadLocationsCall();
     })
     modal2.present();
+  }
+
+  loadLocationsCall(){
+    this.locations.load(this.proptype)
+      .then(data => {
+        this.properties = data;
+      });
   }
 }

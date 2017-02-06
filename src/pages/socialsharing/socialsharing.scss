@@ -1,0 +1,27 @@
+page-socialsharing {
+
+  .sort{
+    padding-top: 10%;
+  }
+
+  #share ion-list-header{
+    padding-bottom: 10% !important;
+  }
+
+  #share button{
+    width: 100%;
+    font-size: 2.0rem;
+  }
+
+  #share img{
+    height: 100%;
+  }
+
+#share div{
+  padding-top: 10%;
+}
+  .button-inner{
+    justify-content:flex-start;
+    width: 90%;
+  }
+}

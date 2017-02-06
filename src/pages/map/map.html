@@ -18,5 +18,25 @@
     <p>Please connect to the Internet...</p>
   </div>
 
+  <div id="floating-button">
+      <ion-slides  #showSlider [options]="sliderOptions" (ionDidChange)="onSlideChange()">
+        <ion-slide *ngFor="let location of properties" (click)="itemTapped($event, location)">
+          <ion-card class="mapcard">
+            <ion-card-header>
+              {{location.name}}
+            </ion-card-header>
+            <ion-card-content class="item item-text-wrap">
+              <span *ngIf="scale == 'miles'">{{location.distance}} miles away</span>
+              <span *ngIf="scale == 'km'">{{location.distance}} km away</span>
+              <span *ngIf="!location.permanently_closed && location.opening_hours">
+        <span *ngIf="location.opening_hours.open_now" class="openstatus">Open Now <br></span>
+        <span *ngIf="!location.opening_hours.open_now" class="closedstatus">Closed <br></span> </span>
+              <span class="vicinity">{{location.vicinity}}</span>
+            </ion-card-content>
+          </ion-card>
+        </ion-slide>
+      </ion-slides>
+  </div>
+
   <div #map id="map"></div>
 </ion-content>

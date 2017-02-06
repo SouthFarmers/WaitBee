@@ -27,4 +27,31 @@ page-map {
     height: 100%;
   }
 
+
+  #floating-button{
+    width: 100%;
+    position: fixed;
+    bottom: 10%;
+    left: 5%;
+    height: 30%;
+    cursor: pointer;
+    z-index: 999;
+  }
+
+  .mapcard{
+    width: calc(100% - 20px);
+  }
+
+  .closedstatus {
+    color: red;
+    font-size: medium;
+    /* font-style: italic; */
+  }
+
+  .openstatus {
+    color: green;
+    font-size: medium;
+    /* font-style: italic; */
+  }
+
 }

@@ -1,13 +1,7 @@
 import { Injectable } from '@angular/core';
 import 'rxjs/add/operator/map';
 import { Connectivity } from './connectivity';
-import {Locations} from "./locations";
-/*
-  Generated class for the GoogleMaps provider.
 
-  See https://angular.io/docs/ts/latest/guide/dependency-injection.html
-  for more info on providers and Angular 2 DI.
-*/
 declare var google;
 
 @Injectable()
@@ -19,19 +13,20 @@ export class GoogleMaps {
   mapInitialised: boolean = false;
   mapLoaded: any;
   mapLoadedObserver: any;
-  markers: any = [];
   apiKey: string;
   userlat:any;
   userlng:any;
 
-  constructor(public connectivityService: Connectivity, public locations: Locations) {
+  constructor(public connectivityService: Connectivity) {
 
   }
 
-  init(mapElement: any, pleaseConnect: any): Promise<any> {
+  init(mapElement: any, pleaseConnect: any, loc1lat:any, loc1lng:any): Promise<any> {
 
     this.mapElement = mapElement;
     this.pleaseConnect = pleaseConnect;
+    this.userlat = loc1lat;
+    this.userlng = loc1lng;
 
     return this.loadGoogleMaps();
 
@@ -94,12 +89,25 @@ export class GoogleMaps {
 
     return new Promise((resolve) => {
 
-        let latLng = new google.maps.LatLng(this.locations.userlat, this.locations.userlng);
-
+        let latLng = new google.maps.LatLng(this.userlat, this.userlng);
         let mapOptions = {
           center: latLng,
-          zoom: 15,
-          mapTypeId: google.maps.MapTypeId.ROADMAP
+          zoom: 16,
+          mapTypeId: google.maps.MapTypeId.ROADMAP,
+          mapTypeControl: true,
+          mapTypeControlOptions: {
+            style: google.maps.MapTypeControlStyle.HORIZONTAL_BAR,
+            position: google.maps.ControlPosition.TOP_CENTER
+          },
+          zoomControl: true,
+          zoomControlOptions: {
+            position: google.maps.ControlPosition.RIGHT_CENTER
+          },
+          scaleControl: true,
+          streetViewControl: true,
+          streetViewControlOptions: {
+            position: google.maps.ControlPosition.RIGHT_TOP
+          }
         }
 
         this.map = new google.maps.Map(this.mapElement, mapOptions);
@@ -158,20 +166,4 @@ export class GoogleMaps {
     }, false);
 
   }
-
-  addMarker(lat: number, lng: number): void {
-
-   // let latLng = new google.maps.LatLng(lat, lng);
-    let latLng = {lat: lat, lng: lng};
-
-    let marker = new google.maps.Marker({
-      map: this.map,
-      animation: google.maps.Animation.DROP,
-      position: latLng
-    });
-    //marker.setMap(this.map);
-    this.markers.push(marker);
-
-  }
-
 }

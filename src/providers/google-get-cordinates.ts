@@ -1,12 +1,14 @@
 import { Injectable } from '@angular/core';
 import { Http } from '@angular/http';
 import 'rxjs/add/operator/map';
+import {UserData} from "./user-data";
 
 @Injectable()
 export class GoogleGetCordinates {
 
   data: any;
-  constructor(public http: Http) {
+  scale:any;
+  constructor(public http: Http, public userdata : UserData) {
     this.data = null;
   }
 
@@ -27,5 +29,23 @@ export class GoogleGetCordinates {
 
   }
 
+  getCountryName(lat, lng){
+
+    return new Promise(resolve => {
+
+      this.http.get('http://ws.geonames.org/countryCodeJSON?lat='+lat+'&lng='+lng+'&username=demo').map(res => res.json()).subscribe(data => {
+        if(data.countryCode == "US"){
+          this.scale = 'miles';
+        }else{
+          this.scale = 'KM';
+        }
+        this.userdata.setCountryCode(data.countryCode);
+        this.userdata.setUserPrefs(1,'distance',this.scale,false);
+        resolve(this.data);
+      });
+
+    });
+
+  }
 
 }

@@ -1,0 +1,27 @@
+.rating {
+
+  p {
+    font-size: 1.3em;
+    color: #6d6d6d;
+  }
+
+
+
+  ion-label {
+    margin-left: 10px;
+  }
+
+  ion-input, ion-select, ion-textarea {
+    background-color: #f2f2f2;
+    padding: 5px 10px;
+  }
+
+.submitbutton{
+
+  border-radius: 30px;
+  font-size:1.0em;
+  border: 1px solid #fff;
+  background-color: #39acdc;
+}
+
+}

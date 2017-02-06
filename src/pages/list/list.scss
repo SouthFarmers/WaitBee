@@ -60,4 +60,23 @@ page-list {
       border-radius: 4px;
     }
   }
+
+
+  ul {
+    padding: 0px;
+
+    &.rating li {
+      background: none;
+      color: #ffb400;
+
+      ion-icon {
+        font-size: 20px;
+      }
+    }
+  }
+
+  .logoimg{
+    width: 23%;
+
+  }
 }

@@ -1,0 +1,41 @@
+<!--
+  Generated template for the Socialsharing page.
+
+  See http://ionicframework.com/docs/v2/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+
+  <ion-navbar color="secondary">
+    <ion-title>Social Sharing</ion-title>
+    <ion-buttons end>
+      <button ion-button color="light" round (click)="dismiss()">Close</button>
+    </ion-buttons>
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content padding>
+
+
+  <ion-list id="share" class="sort">
+
+    <ion-list-header>
+      Show us some love by spreading word about us:
+    </ion-list-header>
+
+
+      <button ion-button  full clear (click)="facebookShare()"><span class="button-inner">Share via Facebook </span><img src="assets/img/facebook.png"></button>
+<div></div>
+      <button ion-button  full clear (click)="whatsappShare()"><span class="button-inner">Share via WhatsApp </span><img src="assets/img/whatsapp.png"></button>
+    <div></div>
+      <button ion-button full clear (click)="instagramShare()"><span class="button-inner">Share via Instagram </span><img src="assets/img/instagram.png"></button>
+    <div></div>
+      <button ion-button full clear (click)="twitterShare()"><span class="button-inner">Share via Twitter </span><img src="assets/img/twitter.png"></button>
+
+
+  </ion-list>
+
+
+</ion-content>

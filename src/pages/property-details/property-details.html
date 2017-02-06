@@ -16,27 +16,59 @@
 <ion-content parallax-header>
 
   <div  class="header-image" id="header">
-    <ion-slides>
+    <ion-slides [options]="sliderOptions">
 
 
       <ion-slide *ngFor="let n of photourl">
-        <ion-img  class="slideimg" src="{{n}}"></ion-img>
+        <img  class="slideimg" src="{{n}}">
+
       </ion-slide>
     </ion-slides>
   </div>
 
   <div class="main-content">
 
-
     <ion-card  class="placecard">
       <ion-card-content class="item item-text-wrap">
-        <span><p>{{address}}</p></span>
+        <rating [(ngModel)]="rating" readOnly="true"></rating>
       </ion-card-content>
     </ion-card>
 
     <ion-card  class="placecard">
       <ion-card-content class="item item-text-wrap">
-        <span><p>{{todayhours}}</p></span>
+        <ion-label><b>Wait Time</b></ion-label>
+        <ion-label>{{waittime}}</ion-label>
+        <ion-label>{{updatedts}}</ion-label>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-card  class="placecard">
+      <ion-card-content class="item item-text-wrap">
+        <ion-label><b>Estimated Rush</b></ion-label>
+        <ion-range disabled min="0" max="10" pin="true" step="1" snaps="true" [(ngModel)]="rush" color="secondary">
+          <ion-icon range-left  name="person"></ion-icon>
+          <ion-icon range-right name="people"></ion-icon>
+        </ion-range>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-card  class="placecard">
+      <ion-card-content class="item item-text-wrap">
+        <span *ngIf="openstatus" class="openstatus"><b>Open Now</b><br></span>
+        <span *ngIf="!openstatus" class="closedstatus"><b>Closed Now</b><br></span>
+        <span *ngIf="openstatus" ><b>Closes at {{closesnow}}</b></span>
+        <span *ngIf="!openstatus" ><b>Opens at {{opensnow}}</b></span>
+        <button clear (click)="showFullTimingList()" style="padding-left: 10px; background: white">
+          <ion-icon *ngIf="!showfullhours" style="font-size: 1.9em" name="arrow-dropdown-circle" ></ion-icon>
+          <ion-icon *ngIf="showfullhours" style="font-size: 1.9em" name="arrow-dropup-circle" ></ion-icon>
+        </button>
+        <span *ngIf="showfullhours" style="white-space: pre-line; padding-top: 5px;"><br>{{todayhours}}</span>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-card  class="placecard">
+      <ion-card-content class="item item-text-wrap">
+        <span><b>{{address}}</b></span>
       </ion-card-content>
     </ion-card>
 
@@ -51,7 +83,7 @@
     <ion-card  class="placecard">
       <ion-card-content class="item item-text-wrap">
         <ion-avatar item-left>
-          <ion-icon name="globe"> <span>     <a href="{{website}}">{{website}}</a></span></ion-icon>
+          <ion-icon name="globe"> <span>     <a href="{{website}}">www.{{placename}}.com</a></span></ion-icon>
         </ion-avatar>
       </ion-card-content>
     </ion-card>
@@ -59,7 +91,7 @@
 
 
     <ion-item>
-      <ion-slides>
+      <ion-slides [options]="sliderOptions">
         <ion-slide *ngFor="let review of reviews">
           <ion-card  class="reviewcard">
             <ion-card-header>
@@ -80,15 +112,12 @@
       </ion-slides>
     </ion-item>
 
-
-
-
-
   </div>
-
-
 
   <div #map id="map"> </div>
 
+  <ion-fab right bottom auto-close-on-click-outside >
+    <button ion-fab (click)="AddWaitTime()" color="dark"><ion-icon name="timer"></ion-icon></button>
+  </ion-fab>
 
 </ion-content>

@@ -1,14 +1,11 @@
 import { Component, ViewChild, ElementRef } from '@angular/core';
-import { NavController, NavParams } from 'ionic-angular';
+import {NavController, NavParams, PopoverController, ToastController} from 'ionic-angular';
 import {Details} from "../../providers/details";
 import {Locations} from "../../providers/locations";
+import {UpdateWaitTime} from "../updateWaittime/updateWaittime";
+import {Database} from '@ionic/cloud-angular';
+import * as moment from "moment";
 
-/*
-  Generated class for the PropertyDetails page.
-
-  See http://ionicframework.com/docs/v2/components/#navigation for more info on
-  Ionic pages and navigation.
-*/
 declare var google;
 @Component({
   selector: 'page-property-details',
@@ -26,39 +23,84 @@ export class PropertyDetailsPage {
   phonenumber:any;
   website:any;
   hours:any;
-  todayhours:any;
+  todayhours:string;
+  openstatus:any;
+  opensnow:any;
+  closesnow:any;
+  showfullhours:boolean=false;
   day:number;
   placelat:any;
   placelng:any;
   photourl:any;
   reviews:any;
-  constructor(public navCtrl: NavController, public navParams: NavParams, public details : Details, public locations: Locations) {
+  rating:any;
+  firebundle:any;
+  waittime:any = "00:00";
+  rush:any = '0';
+  updatedts:any="No updates today";
+  sliderOptions = {
+    autoplay:5000,
+    nextButton: '.swiper-button-next',
+    prevButton: '.swiper-button-prev',
+    autoplayDisableOnInteraction:true,
+    pager: true
+  };
+
+  constructor(public navCtrl: NavController,
+              public navParams: NavParams,
+              public details : Details,
+              public locations: Locations,
+              public popoverCtrl: PopoverController,
+              public db: Database,
+              public toastCtrl: ToastController,) {
+    this.db.connect();
     this.placeID = navParams.get('placeid');
     this.day = new Date().getDay();
    this.loadinfo();
   }
 
   loadinfo(){
+
+    this.db.collection('waittimes').find(this.placeID).fetch().defaultIfEmpty().subscribe(data => {
+      if(data){
+        this.rush = data.rush;
+        this.waittime = data.time.split(":")[0]+" hours : "+data.time.split(":")[0]+" minutes";
+        this.updatedts = moment(data.updatedts).fromNow();
+      }
+    });
+
     this.details.loadPlaceDetails(this.placeID)
       .then(data => {
-        console.log(data);
         this.reviews = data.reviews;
         this.placedetails = data;
         this.placename = data.name;
         this.address = data.formatted_address;
         this.phonenumber = data.formatted_phone_number;
         this.website = data.website;
-        this.hours = data.opening_hours.weekday_text;
-        this.todayhours = this.hours[this.day-1];
+        this.hours = data.opening_hours.weekday_text.toString().split(',').join('\n');
+        this.openstatus = data.opening_hours.open_now;
+        if(this.openstatus){
+          this.closesnow = this.convertMilitaryTime(data.opening_hours.periods[this.day].close.time);
+        }else{
+          let hhnow = new Date().getHours();
+          let openingtimetemp = (data.opening_hours.periods[this.day].open.time).substring(0,2);
+          if(hhnow < openingtimetemp){
+            this.opensnow = this.convertMilitaryTime(data.opening_hours.periods[this.day].open.time);
+          }else{
+            this.opensnow = this.convertMilitaryTime(data.opening_hours.periods[this.day+1].open.time);
+          }
+          this.waittime = "00:00";
+          this.rush='0';
+          this.updatedts='Closed now'
+        }
+        this.todayhours = this.hours;
         this.placelat = data.geometry.location.lat;
         this.placelng = data.geometry.location.lng;
+        this.rating = data.rating;
         this.photourl = [];
         for(let j = 0; j < data.photos.length; j++){
           this.photourl.push('https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference='+data.photos[j].photo_reference+'&key=AIzaSyD_SjvE2iNaEE8gjynWk9KLDJPvXMDrvNc');
         }
-        console.log(data);
-        // this.placephotourl = 'https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference='+data.photos[0].photo_reference+'&key=AIzaSyD_SjvE2iNaEE8gjynWk9KLDJPvXMDrvNc';
-        // document.getElementById('header').style.backgroundImage = 'url('+this.placephotourl+')';
         this.loadmap();
 
       });
@@ -66,15 +108,13 @@ export class PropertyDetailsPage {
 
 
   ionViewDidLoad() {
-    console.log('ionViewDidLoad PropertyDetailsPage');
+
   }
 
   loadmap(){
 
   let pointA = new google.maps.LatLng(this.locations.userlat, this.locations.userlng);
-   // let pointA = {lat: this.locations.userlat, lng: this.locations.userlng};
   let  pointB = new google.maps.LatLng(this.placelat, this.placelng);
-   // let pointB = {lat: this.placelat, lng: this.placelng};
   let  myOptions = {
       zoom: 15,
       center: pointA,
@@ -88,8 +128,6 @@ export class PropertyDetailsPage {
     });
   this.calculateAndDisplayRoute(directionsService, directionsDisplay, pointA, pointB);
 }
-
-
 
   calculateAndDisplayRoute(directionsService, directionsDisplay, pointA, pointB) {
   directionsService.route({
@@ -106,4 +144,47 @@ export class PropertyDetailsPage {
     }
   });
 }
+
+  AddWaitTime() {
+if(this.openstatus) {
+  let popover = this.popoverCtrl.create(UpdateWaitTime, {
+    waittime: this.waittime,
+    rush: this.rush
+  });
+  popover.present();
+  popover.onDidDismiss(data => {
+    if (data) {
+      this.db.collection('waittimes').insert({
+        id:this.placeID,
+        time: data.waittime,
+        rush: data.rush,
+        updatedts: new Date().valueOf()
+      })
+      this.waittime = data.waittime.split(":")[0] + " hours : " + data.waittime.split(":")[0] + " minutes";
+      this.rush = data.rush;
+      this.updatedts = moment(new Date().valueOf()).fromNow();
+    }
+  })
+}else{
+  let toast = this.toastCtrl.create({
+    message: 'Can\'\t do that, closed now',
+    duration: 2000,
+    position: 'bottom'
+  });
+  toast.present(toast);
+}
+  }
+
+  convertMilitaryTime(time){
+    var hours24 = parseInt(time.substring(0, 2),10);
+    var hours = ((hours24 + 11) % 12) + 1;
+    var amPm = hours24 > 11 ? 'pm' : 'am';
+    var minutes = time.substring(2);
+
+    return hours + ':' + minutes + amPm;
+  }
+
+  showFullTimingList(){
+    this.showfullhours = this.showfullhours ? false : true;
+  }
 }

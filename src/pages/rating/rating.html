@@ -1,0 +1,43 @@
+<ion-header>
+  <ion-navbar>
+    <button ion-button menuToggle >
+      <ion-icon name="menu"></ion-icon>
+    </button>
+
+    <ion-title>Feedback</ion-title>
+
+    <ion-buttons end>
+      <button ion-button icon-only (click)="goHome()">
+        <ion-icon name="home"></ion-icon>
+      </button>
+    </ion-buttons>
+
+  </ion-navbar>
+</ion-header>
+
+<ion-content class="rating">
+  <h3 align="center"> How are we doing?</h3>
+
+  <ion-range min="0" max="10" pin="true" step="1" snaps="true" [(ngModel)]="rating" color="secondary">
+    <ion-icon range-left  name="sad"></ion-icon>
+    <ion-icon range-right name="happy"></ion-icon>
+  </ion-range>
+<p align="center">Your rating : <b>{{rating}}</b></p>
+
+
+
+  <p>Any Comments/Suggestions for us?</p>
+
+  <ion-item>
+    <ion-label floating>Full Name</ion-label>
+    <ion-input  type="text" [(ngModel)]="name"></ion-input>
+  </ion-item>
+
+  <ion-item>
+    <ion-label floating>Tell us what is in your mind...</ion-label>
+    <ion-textarea rows="6" [(ngModel)]="comments"></ion-textarea>
+  </ion-item>
+
+<p align="center">
+  <button ion-button class="submitbutton"  (click)="submitfeedback()" >Send Feedback</button></p>
+</ion-content>

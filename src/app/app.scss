@@ -22,3 +22,41 @@ ion-app.ios [padding] .scroll-content {
   height: 100%;
   width:100%
 }
+
+.usergreeting{
+  width: 100%;
+  text-align: center;
+}
+.userimg {
+  height: 160px;
+  width: 160px;
+  border-radius: 50%;
+  margin-left: 25%;
+  margin-top: 5%;
+  border: solid 4px #FFFFFF;
+  display: inline;
+}
+
+.popover-ios .popover-content {
+  width: 70%;
+  /* min-width: 0; */
+  /* min-height: 0; */
+  /* max-height: 90%; */
+  height: 50%;
+  border-radius: 10px;
+  color: #000;
+  background: #fff;
+}
+
+.waittimecss{
+  padding-bottom: 20px;
+  padding-top: 20px;
+}
+
+.datetime-ios {
+  padding: 11px 30px 11px 16px;
+}
+
+ion-datetime {
+  font-size: 2.5rem;
+}
