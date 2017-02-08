@@ -1,23 +1,23 @@
 page-account {
 
-  #loggedout {
-    padding-top: 50%;
-    text-align: center;
-  }
+  //#loggedout {
+  //  padding-top: 50%;
+  //  text-align: center;
+  //}
 
 
-  #fblogin {
-    padding-top: 10%;
-  }
+  //#fblogin {
+  //  padding-top: 10%;
+  //}
 
   ion-card {
 
-    margin-top: 100px;
+    margin-top: 30% !important;
     overflow: visible;
 
     ion-card-content {
 
-      background-color: map-get($colors, primary);
+      background-color: map-get($colors, secondary);
       color: #FFFFFF;
       text-align: center;
       padding-bottom: 28px;
@@ -32,8 +32,9 @@ page-account {
       }
 
       h2 {
-        font-size: 2.5rem;
+        font-size: 3.0rem !important;
         margin-top: .5rem;
+        font-weight: bold !important;
         color: white;
       }
 
@@ -44,5 +45,27 @@ page-account {
 
     }
 
+  }
+
+
+
+  .login-container {
+    display: -webkit-flex;
+    -webkit-flex-direction: column;
+    height: 100%;
+  }
+
+  .login-container > .button-row img {
+    max-width: 80%;
+  }
+
+  .login-container > .header {
+    -webkit-flex: 4;
+    padding-top: 20px;
+  }
+
+  .login-container .button-row{
+    text-align: center !important;
+    padding-bottom: 5% !important;
   }
 }

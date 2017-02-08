@@ -10,7 +10,7 @@
     <ion-buttons >
       <button ion-button color="light" round (click)="dismiss()" *ngIf="loggedin">Close</button>
     </ion-buttons>
-    <ion-title>account</ion-title>
+    <ion-title>Login</ion-title>
 
     <ion-buttons end>
       <button ion-button color="light" round (click)="dismiss()" *ngIf="!loggedin">Close</button>
@@ -26,24 +26,52 @@
 <ion-content padding>
 
   <div  id="loggedout" *ngIf="!loggedin">
-    <div id="glogin"><button ion-button color="light" clear (click)="googleLogin()"><img src="assets/img/glogin.png"></button></div>
-    <div id="fblogin"><button ion-button color="light" clear (click)="fbLogin()"><img src="assets/img/fblogin.png"></button></div>
+    <section class="login-container">
+      <div class = "col header text-center">
+        <img src="assets/img/slide1.png"/>
+      </div>
+      <div class = "col button-row text-center" (click)="fbLogin()">
+        <img src="assets/img/fbl2.png" />
+      </div>
+      <div class = "col button-row text-center" (click)="googleLogin()">
+        <img src="assets/img/gl2.png" />
+      </div>
+    </section>
   </div>
 
 
   <div  id="loggedin" *ngIf="loggedin">
     <ion-card>
       <ion-card-content>
-        <img src="{{userinfo.profile_picture}}"/>
-        <h2>{{userinfo.full_name}}</h2>
+        <img src="{{profile_picture}}"/>
+        <h2>{{full_name}}</h2>
       </ion-card-content>
 
       <ion-list>
-        <a href="mailto:{{userinfo.email}}" ion-item>
+        <ion-item>
           <ion-icon name="mail" item-left></ion-icon>
           <p>Email</p>
-          <h2>{{userinfo.email}}</h2>
-        </a>
+          <h2>{{email}}</h2>
+        </ion-item>
+
+        <ion-item>
+          <ion-icon name="ribbon" item-left></ion-icon>
+          <p>Your points</p>
+          <h2>{{points}}</h2>
+        </ion-item>
+
+        <ion-item>
+          <p>Your level</p>
+          <img src={{levelpic}}>
+        </ion-item>
+
+        <ion-item>
+          <ion-icon name="egg" item-left></ion-icon>
+          <p>Points to next level</p>
+          <h2>{{nextlevel}}</h2>
+          <h3>Keep updating waittimes to earn points</h3>
+        </ion-item>
+
       </ion-list>
 
     </ion-card>

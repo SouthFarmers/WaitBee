@@ -1,7 +1,7 @@
 import {Component} from '@angular/core';
 import { NavController,FabContainer, ModalController  } from 'ionic-angular';
 import { Locations } from '../../providers/locations';
-import {Geolocation} from 'ionic-native';
+import {Geolocation, GoogleAnalytics} from 'ionic-native';
 import {PropertyDetailsPage} from "../property-details/property-details";
 import { ModalAutocompleteItems } from '../modal-autocomplete-items/modal-autocomplete-items';
 import {GoogleGetCordinates} from "../../providers/google-get-cordinates";
@@ -24,12 +24,17 @@ export class ListPage {
   properties:any;
   scale:any;
   currentaddr: string="Your Location";
+  radius:any;
+  sortby:any;
+  showopenonly:any;
 
   constructor(public navCtrl: NavController,
               public locations: Locations,
               public modalCtrl: ModalController,
               public getcordinates : GoogleGetCordinates,
-              public userdata : UserData) {}
+              public userdata : UserData) {
+    GoogleAnalytics.trackView("List Page", "", true);
+  }
 
   ionViewDidLoad() {
 
@@ -40,7 +45,10 @@ export class ListPage {
     this.rest.style.backgroundColor = 'red';
 
     this.userdata.getUserPrefs().then(data => {
+      this.radius = data[0].radius;
+      this.sortby = data[0].sort;
       this.scale = data[0].scale;
+      this.showopenonly = data[0].openonly;
     })
 
     Geolocation.getCurrentPosition().then((position) => {
@@ -68,6 +76,7 @@ export class ListPage {
 
 
   changeProperty(fab: FabContainer, value) {
+    GoogleAnalytics.trackEvent("InPage", "ListPage-change-property", value, 1);
     if(value == 1) {
       fab.close();
       this.resetfabcolor();
@@ -100,12 +109,14 @@ export class ListPage {
   }
 
   changeLocation(){
+
     let modal = this.modalCtrl.create(ModalAutocompleteItems,{
       currlocation:this.currentaddr
     });
     modal.onDidDismiss(data => {
 
       if(data && data.description){
+        GoogleAnalytics.trackEvent("InPage", "ListPage-change-location", data.description, 1);
         this.getcordinates.getcordinates(data.description)
           .then(data => {
             this.locations.userlat = data[0].geometry.location.lat;
@@ -125,21 +136,30 @@ export class ListPage {
   }
 
   filterlocations() {
+    GoogleAnalytics.trackEvent("InPage", "ListPage-filter-locations", "", 1);
     this.properties = this.locations.filterItems(this.searchTerm);
   }
 
   OpenSettings(){
+    GoogleAnalytics.trackEvent("InPage", "ListPage-change-settings", "", 1);
     let modal2 = this.modalCtrl.create(Filters);
     modal2.onDidDismiss(data => {
-      this.loadLocationsCall();
+      this.userdata.getUserPrefs().then(data => {
+        this.radius = data[0].radius;
+        this.sortby = data[0].sort;
+        this.scale = data[0].scale;
+        this.showopenonly = data[0].openonly;
+        this.loadLocationsCall();
+      })
     })
     modal2.present();
   }
 
   loadLocationsCall(){
-    this.locations.load(this.proptype)
-      .then(data => {
-        this.properties = data;
-      });
+      this.locations.load(this.proptype, this.radius, this.sortby,this.scale, this.showopenonly)
+        .then(data => {
+          this.properties = data;
+        });
+
   }
 }

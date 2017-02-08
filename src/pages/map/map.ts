@@ -90,7 +90,8 @@ export class MapPage {
     for(let i = 0; i<this.markers.length; i++){
       this.markers[i].setIcon('http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld='+(i+1)+'|'+this.redhex+'|000000');
     }
-    let newiconnumber = this.slider.getActiveIndex()+1
+    let newiconnumber = this.slider.getActiveIndex()+1;
+    this.maps.map.panTo(this.markers[this.slider.getActiveIndex()].getPosition());
     this.markers[this.slider.getActiveIndex()].setIcon('http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld='+newiconnumber+'|'+this.bluehex+'|000000');
   }
 }

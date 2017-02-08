@@ -1,6 +1,6 @@
 import {Component, ViewChild} from '@angular/core';
 import {Platform, Nav, Events, MenuController, ModalController, ToastController} from 'ionic-angular';
-import {StatusBar, Splashscreen, Geolocation} from 'ionic-native';
+import {StatusBar, Splashscreen, Geolocation, GoogleAnalytics } from 'ionic-native';
 import {HomePage} from '../pages/home/home';
 import {TutorialPage} from '../pages/tutorial/tutorial';
 import {Rating} from '../pages/rating/rating';
@@ -56,6 +56,7 @@ export class MyApp {
 
 
     platform.ready().then(() => {
+      GoogleAnalytics.startTrackerWithId('UA-91589346-1');
       StatusBar.styleDefault();
       Splashscreen.hide();
       this.checkdiagnostics.checkNetwork();

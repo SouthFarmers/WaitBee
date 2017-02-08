@@ -11,10 +11,16 @@ import { GoogleAuth, User } from '@ionic/cloud-angular';
 })
 export class AccountPage {
 
-  userinfo:any;
+  userinfo:any = [];
   HAS_LOGGED_IN = 'hasLoggedIn';
   loggedin:any = false;
   USER_OBJ:string = 'user_data_obj';
+  profile_picture:string = "assets/img/slide1.png";
+  full_name:string = 'gautham';
+  email:string = 'gautham_gmail.com';
+  levelpic:any = 'assets/img/baby.png';
+  points:any;
+  nextlevel:any;
   constructor(public events: Events,
               public toastCtrl: ToastController,
               public navCtrl: NavController,
@@ -23,14 +29,30 @@ export class AccountPage {
               public googleAuth: GoogleAuth,
               public user: User) {
 
-    this.userData.hasLoggedIn().then((hasLoggedIn) => {
-      if(hasLoggedIn) {
-        this.userData.getuserDate().then(data =>{
-          this.userinfo = data;
-        })
-        this.enableDiv(true);
-      }
-    });
+    this.enableDiv(true);
+    this.points = 387;
+    if (this.points < 100) {
+      this.levelpic = 'assets/img/baby.png'
+      this.nextlevel = 100 - this.points;
+    } else if (this.points >= 100 && this.points < 500) {
+      this.levelpic = 'assets/img/young.png'
+      this.nextlevel = 500 - this.points;
+    } else if (this.points >= 500 && this.points < 1000) {
+      this.levelpic = 'assets/img/master.png'
+      this.nextlevel = 1000 - this.points;
+    } else if (this.points >= 1000 && this.points < 2000) {
+      this.levelpic = 'assets/img/king.png'
+      this.nextlevel = 2000 - this.points;
+    }
+
+    // this.userData.hasLoggedIn().then((hasLoggedIn) => {
+    //   if(hasLoggedIn) {
+    //     this.userData.getuserDate().then(data =>{
+    //       this.userinfo = data;
+    //     })
+    //     this.enableDiv(true);
+    //   }
+    // });
   }
 
   ionViewDidLoad() {
@@ -59,7 +81,7 @@ export class AccountPage {
   }
 
   googleLogin(){
-
+    console.log('g');
     this.googleAuth.login().then( data => {
       this.userData.storeUserData(this.user.social.google.data);
       this.userinfo = this.user.social.google.data;
@@ -80,6 +102,8 @@ export class AccountPage {
   }
 
   fbLogin(){
+
+    console.log('fb');
 
   }
 

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Events } from 'ionic-angular';
 import { Storage } from '@ionic/storage';
+import {provideUser} from "@ionic/cloud-angular";
 
 @Injectable()
 export class UserData {
@@ -60,11 +61,12 @@ export class UserData {
   }
 
   setUserPrefs(radius, sortby, scale, openonly){
-    this.userpref.push({
-      scale:scale,
-      radius:radius,
-      sort:sortby,
-      openonly:openonly
+      this.userpref = [];
+      this.userpref.push({
+      scale: scale,
+      radius: radius,
+      sort: sortby,
+      openonly: openonly
     });
     this.storage.set(this.USER_PREF, this.userpref);
   }

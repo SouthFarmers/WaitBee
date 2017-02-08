@@ -20,13 +20,16 @@ export class Locations {
     this.data = null;
   }
 
-  load(type) {
+  load(type, radius, sortby,scale,showopenonly) {
+    this.radius = radius;
+    this.sortby = sortby;
+    this.scale = scale;
+    this.showopenonly = showopenonly;
 
-    this.getUserPreferences();
-    this.data = null;
     let loader = this.loadingCtrl.create({
       content: "Please wait..."
     });
+    this.data = null;
     loader.present();
 
     if (this.data) {
@@ -37,8 +40,12 @@ export class Locations {
     return new Promise(resolve => {
 
       //let url2 = 'https://maps.googleapis.com/maps/api/place/textsearch/json?location='+this.userlat+','+this.userlng+'&radius='+radius+'&query='+type+'&key=AIzaSyD_SjvE2iNaEE8gjynWk9KLDJPvXMDrvNc';
-
-      let url = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=' + this.userlat + ',' + this.userlng + '&rankby=distance&type=' + type + '&key=AIzaSyD_SjvE2iNaEE8gjynWk9KLDJPvXMDrvNc';
+      let url
+      if(this.showopenonly){
+        url = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=' + this.userlat + ',' + this.userlng + '&rankby=distance&opennow=true&type=' + type + '&key=AIzaSyD_SjvE2iNaEE8gjynWk9KLDJPvXMDrvNc';
+      }else{
+        url = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=' + this.userlat + ',' + this.userlng + '&rankby=distance&type=' + type + '&key=AIzaSyD_SjvE2iNaEE8gjynWk9KLDJPvXMDrvNc';
+      }
       this.http.get(url).map(res => res.json()).subscribe(data => {
           this.data = data.results;
           // if (data.next_page_token) {
@@ -64,8 +71,6 @@ export class Locations {
         });
 
     });
-
-
   }
 
   applyHaversine(locations) {
@@ -127,35 +132,19 @@ export class Locations {
   }
 
   refinedata(data) {
-    this.data = this.applyHaversine(data);
-    for (let i = 0; i < data.length; i++) {
-      if (data[i].distance > this.radius) {
-        this.data.pop(data[i]);
-        i--;
+      this.data = this.applyHaversine(data);
+      for (let i = 0; i < data.length; i++) {
+        if (data[i].distance > this.radius) {
+          this.data.pop(data[i]);
+          i--;
+        }
       }
-    }
-    if (this.sortby == 'distance') {
-    } else {
-      this.data.sort((locationA, locationB) => {
-        return locationB.rating - locationA.rating;
-      });
-    }
-  }
 
-  getUserPreferences(){
-
-    this.userdata.getUserPrefs().then(data => {
-      console.log(data);
-      this.radius = data[0].radius;
-      this.sortby = data[0].sort;
-      this.scale = data[0].scale;
-      this.showopenonly = data[0].openonly;
-    })
-    // this.storage.get('userpref').then((val) => {
-    //   this.radius = val[0].radius;
-    //   this.sortby = val[0].sort;
-    //   this.scale = val[0].scale;
-    //   this.showopenonly = val[0].openonly;
-    // })
+      if (this.sortby == 'distance') {
+      } else {
+        this.data.sort((locationA, locationB) => {
+          return locationB.rating - locationA.rating;
+        });
+      }
   }
 }
