@@ -33,7 +33,9 @@
                            refreshingText="Refreshing..."></ion-refresher-content>
   </ion-refresher>
 
-
+<ion-item *ngIf="propcount" class="emptytext">
+  Feeling lonely here <br> change radius or property
+</ion-item>
 
   <ion-item *ngFor="let location of properties" (click)="itemTapped($event, location)" class="mainpage">
 

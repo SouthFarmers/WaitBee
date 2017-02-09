@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ViewController } from 'ionic-angular';
+import {Storage} from '@ionic/storage';
 import {Locations} from "../../providers/locations";
-import {UserData} from "../../providers/user-data";
 
 
 @Component({
@@ -13,17 +13,18 @@ export class Filters implements OnInit{
 
   distance: number = 5;
   sortby:string = "distance";
+  local:any;
   scale:string='miles';
   openonly:any = false;
+  userpref:any;
 
-  constructor(public viewCtrl: ViewController, public location : Locations, public userdata:UserData) {
+  constructor(public viewCtrl: ViewController, public storage: Storage, public location : Locations) {
 
-    this.userdata.getUserPrefs().then(data => {
-
-      this.distance = data[0].radius;
-      this.sortby = data[0].sort;
-      this.scale = data[0].scale;
-      this.openonly = data[0].openonly;
+    this.storage.get('userpref').then((val) => {
+      this.distance = val[0].radius;
+      this.sortby = val[0].sort;
+      this.scale = val[0].scale;
+      this.openonly = val[0].openonly;
     })
   }
 
@@ -34,8 +35,14 @@ export class Filters implements OnInit{
   }
 
   save(){
-    this.userdata.setUserPrefs(this.distance,this.sortby,this.scale,this.openonly);
-    this.viewCtrl.dismiss();
+    this.userpref.push({
+      scale:this.scale,
+      radius:this.distance,
+      sort:this.sortby,
+      openonly:this.openonly
+    });
+    this.storage.set('userpref', this.userpref);
+    this.viewCtrl.dismiss('save');
   }
 
 }

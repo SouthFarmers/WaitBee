@@ -25,6 +25,14 @@ page-list {
     font-size: large;
   }
 
+.emptytext{
+  text-align: center;
+  vertical-align: middle;
+  height: 100%;
+  font-size: large;
+  background: rgba(192, 192,192,0.9);
+  color: #b30000
+}
   .closedstatus {
     color: red;
     font-size: medium;

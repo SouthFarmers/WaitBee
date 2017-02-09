@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Events } from 'ionic-angular';
 import { Storage } from '@ionic/storage';
-import {provideUser} from "@ionic/cloud-angular";
 
 @Injectable()
 export class UserData {
@@ -23,19 +22,18 @@ export class UserData {
 
   constructor(public events: Events, public storage: Storage) {}
 
-  getuserDate(){
+  getuserData(){
     return this.storage.get(this.USER_OBJ).then((value) => {
       return value;
     });
   }
 
   storeUserData(data){
-    this.userobj.push({
-      full_name:data.full_name,
-      profile_picture:data.profile_picture,
-      email:data.email
-    });
-    this.storage.set(this.USER_OBJ, this.userobj);
+    this.storage.set(this.USER_OBJ, data);
+  }
+
+  SetLoggedIn(){
+    this.storage.set(this.HAS_LOGGED_IN, true);
   }
 
   hasLoggedIn() {
@@ -61,12 +59,12 @@ export class UserData {
   }
 
   setUserPrefs(radius, sortby, scale, openonly){
-      this.userpref = [];
-      this.userpref.push({
-      scale: scale,
-      radius: radius,
-      sort: sortby,
-      openonly: openonly
+    this.userpref = [];
+    this.userpref.push({
+      scale:scale,
+      radius:radius,
+      sort:sortby,
+      openonly:openonly
     });
     this.storage.set(this.USER_PREF, this.userpref);
   }

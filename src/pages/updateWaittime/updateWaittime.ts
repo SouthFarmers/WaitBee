@@ -1,6 +1,5 @@
 import {ViewController, NavParams} from "ionic-angular";
 import {Component} from "@angular/core";
-import {GoogleAnalytics} from 'ionic-native';
 @Component({
   template: `
 <ion-header>
@@ -38,19 +37,17 @@ export class UpdateWaitTime {
   rush:number = 0;
   data:any;
   constructor(public viewCtrl: ViewController, public navParams: NavParams) {
-    GoogleAnalytics.trackView("update waittime modal", "", false);
     this.waittime = navParams.get('waittime');
     this.rush = navParams.get('rush');
   }
 
   close() {
-    GoogleAnalytics.trackEvent("InPage", "waittimePage-waititme-closed", "closed without adding", 1);
     this.viewCtrl.dismiss();
   }
 
   save(){
     //this.split = this.waittime.split(":");
-    GoogleAnalytics.trackEvent("InPage", "waittimePage-added-waititme", this.waittime, 1);
+
     this.data = {waittime:this.waittime,rush:this.rush};
     this.viewCtrl.dismiss(this.data);
   }

@@ -25,7 +25,6 @@ export class Locations {
     this.sortby = sortby;
     this.scale = scale;
     this.showopenonly = showopenonly;
-
     let loader = this.loadingCtrl.create({
       content: "Please wait..."
     });
@@ -74,7 +73,6 @@ export class Locations {
   }
 
   applyHaversine(locations) {
-
     let usersLocation = {
       lat: this.userlat,
       lng: this.userlng
@@ -86,6 +84,7 @@ export class Locations {
         lat: loc.geometry.location.lat,
         lng: loc.geometry.location.lng
       };
+
       loc.distance = this.getDistanceBetweenPoints(
         usersLocation,
         placeLocation,
@@ -133,13 +132,14 @@ export class Locations {
 
   refinedata(data) {
       this.data = this.applyHaversine(data);
-      for (let i = 0; i < data.length; i++) {
-        if (data[i].distance > this.radius) {
-          this.data.pop(data[i]);
-          i--;
+      let i = 0;
+      while(i < data.length){
+        if(data[i].distance > this.radius || data[i].types.includes("gas_station")){
+          this.data.splice(i,1);
+        }else{
+          i++;
         }
       }
-
       if (this.sortby == 'distance') {
       } else {
         this.data.sort((locationA, locationB) => {

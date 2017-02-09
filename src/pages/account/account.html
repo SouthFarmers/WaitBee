@@ -8,15 +8,15 @@
 
   <ion-navbar color="secondary">
     <ion-buttons >
-      <button ion-button color="light" round (click)="dismiss()" *ngIf="loggedin">Close</button>
+      <button ion-button color="light" clear (click)="dismiss()" *ngIf="loggedin">Close</button>
     </ion-buttons>
-    <ion-title>Login</ion-title>
+    <ion-title>account</ion-title>
 
     <ion-buttons end>
-      <button ion-button color="light" round (click)="dismiss()" *ngIf="!loggedin">Close</button>
+      <button ion-button color="light" clear (click)="dismiss()" *ngIf="!loggedin">Close</button>
     </ion-buttons>
     <ion-buttons end>
-      <button ion-button color="light" round (click)="logout()" *ngIf="loggedin">Logout</button>
+      <button ion-button color="light" clear (click)="logout()" *ngIf="loggedin">Logout</button>
     </ion-buttons>
   </ion-navbar>
 

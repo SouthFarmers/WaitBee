@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {ViewController, NavParams} from 'ionic-angular';
-import {UserData} from "../../providers/user-data";
+import {Storage} from '@ionic/storage';
 
 declare var google: any;
 
@@ -18,13 +18,13 @@ export class ModalAutocompleteItems implements OnInit{
   currentlocation:any;
   countrycode:string="";
 
-  constructor(public viewCtrl: ViewController, public navParams: NavParams, public userdata : UserData) {
+  constructor(public viewCtrl: ViewController, public navParams: NavParams, public storage: Storage) {
     this.currentlocation = navParams.get('currlocation');
   }
 
   ngOnInit() {
-    this.userdata.getCountryCode().then(data => {
-      this.countrycode = data;
+    this.storage.get('countrycode').then((val) => {
+      this.countrycode = val;
     })
     this.acService = new google.maps.places.AutocompleteService();
     this.autocompleteItems = [];
@@ -50,7 +50,7 @@ export class ModalAutocompleteItems implements OnInit{
     }
     let self = this;
     let config = {
-      types:  ['geocode'],
+      types:  ['geocode'], // other types available in the API: 'establishment', 'regions', and 'cities'
       input: this.autocomplete.query,
       componentRestrictions: { country: this.countrycode }
     }

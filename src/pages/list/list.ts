@@ -27,13 +27,14 @@ export class ListPage {
   radius:any;
   sortby:any;
   showopenonly:any;
+  propcount:any;
 
   constructor(public navCtrl: NavController,
               public locations: Locations,
               public modalCtrl: ModalController,
               public getcordinates : GoogleGetCordinates,
               public userdata : UserData) {
-    GoogleAnalytics.trackView("List Page", "", true);
+    //GoogleAnalytics.trackView("List Page", "", true);
   }
 
   ionViewDidLoad() {
@@ -49,13 +50,12 @@ export class ListPage {
       this.sortby = data[0].sort;
       this.scale = data[0].scale;
       this.showopenonly = data[0].openonly;
+      Geolocation.getCurrentPosition().then((position) => {
+        this.locations.userlat = position.coords.latitude;
+        this.locations.userlng = position.coords.longitude;
+        this.loadLocationsCall();
+      });
     })
-
-    Geolocation.getCurrentPosition().then((position) => {
-      this.locations.userlat = position.coords.latitude;
-      this.locations.userlng = position.coords.longitude;
-      this.loadLocationsCall();
-    });
 
   }
 
@@ -76,7 +76,7 @@ export class ListPage {
 
 
   changeProperty(fab: FabContainer, value) {
-    GoogleAnalytics.trackEvent("InPage", "ListPage-change-property", value, 1);
+    //GoogleAnalytics.trackEvent("InPage", "ListPage-change-property", value, 1);
     if(value == 1) {
       fab.close();
       this.resetfabcolor();
@@ -116,34 +116,37 @@ export class ListPage {
     modal.onDidDismiss(data => {
 
       if(data && data.description){
-        GoogleAnalytics.trackEvent("InPage", "ListPage-change-location", data.description, 1);
+        //GoogleAnalytics.trackEvent("InPage", "ListPage-change-location", data.description, 1);
         this.getcordinates.getcordinates(data.description)
           .then(data => {
             this.locations.userlat = data[0].geometry.location.lat;
             this.locations.userlng = data[0].geometry.location.lng;
             this.currentaddr = data[0].formatted_address;
+            this.loadLocationsCall();
           });
       }else if(data && data.revert){
         Geolocation.getCurrentPosition().then((position) => {
           this.currentaddr = "Your Location";
           this.locations.userlat = position.coords.latitude;
           this.locations.userlng = position.coords.longitude;
+          this.loadLocationsCall();
         });
       }
-      this.loadLocationsCall();
+
     })
     modal.present();
   }
 
   filterlocations() {
-    GoogleAnalytics.trackEvent("InPage", "ListPage-filter-locations", "", 1);
+    //GoogleAnalytics.trackEvent("InPage", "ListPage-filter-locations", "", 1);
     this.properties = this.locations.filterItems(this.searchTerm);
   }
 
   OpenSettings(){
-    GoogleAnalytics.trackEvent("InPage", "ListPage-change-settings", "", 1);
+    //GoogleAnalytics.trackEvent("InPage", "ListPage-change-settings", "", 1);
     let modal2 = this.modalCtrl.create(Filters);
     modal2.onDidDismiss(data => {
+      if(data){
       this.userdata.getUserPrefs().then(data => {
         this.radius = data[0].radius;
         this.sortby = data[0].sort;
@@ -151,14 +154,19 @@ export class ListPage {
         this.showopenonly = data[0].openonly;
         this.loadLocationsCall();
       })
+      }
     })
     modal2.present();
   }
 
   loadLocationsCall(){
+
       this.locations.load(this.proptype, this.radius, this.sortby,this.scale, this.showopenonly)
         .then(data => {
           this.properties = data;
+          if(data.length === 0){
+            this.propcount = true;
+          }else{this.propcount = false;}
         });
 
   }

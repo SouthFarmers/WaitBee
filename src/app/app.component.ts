@@ -1,15 +1,15 @@
 import {Component, ViewChild} from '@angular/core';
 import {Platform, Nav, Events, MenuController, ModalController, ToastController} from 'ionic-angular';
-import {StatusBar, Splashscreen, Geolocation, GoogleAnalytics } from 'ionic-native';
+import {StatusBar, Splashscreen, Geolocation} from 'ionic-native';
 import {HomePage} from '../pages/home/home';
 import {TutorialPage} from '../pages/tutorial/tutorial';
 import {Rating} from '../pages/rating/rating';
 import {UserData} from "../providers/user-data";
 import {AboutPage} from "../pages/about/about";
-import {Filters} from "../pages/filters/filters";
 import {GoogleGetCordinates} from "../providers/google-get-cordinates";
 import {CheckDiagnostics} from "../providers/check-diagnostics";
 import {AccountPage} from "../pages/account/account";
+import {Database} from '@ionic/cloud-angular';
 import {SocialsharingPage} from "../pages/socialsharing/socialsharing";
 
 export interface PageInterface {
@@ -27,7 +27,6 @@ export class MyApp {
   @ViewChild(Nav) nav: Nav;
   loggedInPages: PageInterface[] = [
     {title: 'Account', component: AccountPage, icon: 'person'},
-    {title: 'Filters', component: Filters, icon: 'funnel'},
     {title: 'About Us', component: AboutPage, icon: 'information-circle'},
     {title: 'Rate US', component: '', icon: 'star-half'},
     {title: 'Feed Back', component: Rating, icon: 'chatboxes'},
@@ -35,7 +34,6 @@ export class MyApp {
   ];
   loggedOutPages: PageInterface[] = [
     {title: 'Login', component: AccountPage, icon: 'log-in'},
-    {title: 'Filters', component: Filters, icon: 'funnel'},
     {title: 'About Us', component: AboutPage, icon: 'information-circle'},
     {title: 'Rate US', component: '', icon: 'star-half'},
     {title: 'Feed Back', component: Rating, icon: 'chatboxes'},
@@ -52,46 +50,34 @@ export class MyApp {
               public modalCtrl: ModalController,
               public toastCtrl: ToastController,
               public getcordinates : GoogleGetCordinates,
-              public checkdiagnostics: CheckDiagnostics) {
+              public checkdiagnostics: CheckDiagnostics,
+              public db: Database) {
 
 
     platform.ready().then(() => {
-      GoogleAnalytics.startTrackerWithId('UA-91589346-1');
       StatusBar.styleDefault();
-      Splashscreen.hide();
       this.checkdiagnostics.checkNetwork();
       this.checkdiagnostics.getGPSavaialability();
+      this.getUserLoginstatus();
+      this.userData.checkHasSeenTutorial().then((hasSeenTutorial) => {
+        if (hasSeenTutorial === null) {
+          Geolocation.getCurrentPosition().then((position) => {
+            this.getcordinates.getCountryName(position.coords.latitude,position.coords.longitude);
+          })
+          this.rootPage = TutorialPage;
+        } else {
+          this.rootPage = HomePage;
+        }
+      });
+      Splashscreen.hide();
     });
 
-    this.userData.checkHasSeenTutorial().then((hasSeenTutorial) => {
-      if (hasSeenTutorial === null) {
-        Geolocation.getCurrentPosition().then((position) => {
-          this.getcordinates.getCountryName(position.coords.latitude,position.coords.longitude);
-        })
-        this.rootPage = TutorialPage;
-      } else {
-        this.rootPage = HomePage;
-      }
-    });
-
-    this.userData.hasLoggedIn().then((hasLoggedIn) => {
-      this.enableMenu(hasLoggedIn === true);
-      if(hasLoggedIn){
-        this.userData.getuserDate().then(data => {
-          this.usrimg = data.profile_picture;
-          this.UserName = data.full_name;
-        })
-      }
-    });
 
     this.listenToLoginEvents();
   }
 
   openPage(page: PageInterface) {
-    if(page.title == 'Filters') {
-      let modal2 = this.modalCtrl.create(Filters);
-      modal2.present();
-    }else if(page.title == 'Rate US') {
+    if(page.title == 'Rate US') {
       let toast = this.toastCtrl.create({
         message: 'This will goto App store/Play store after deployment',
         duration: 4000,
@@ -111,18 +97,39 @@ export class MyApp {
   }
 
   listenToLoginEvents() {
+
     this.events.subscribe('user:login', () => {
+      console.log('in login events');
       this.enableMenu(true);
+      this.getUserLoginstatus();
     });
 
     this.events.subscribe('user:logout', () => {
       this.enableMenu(false);
+      this.usrimg = "assets/img/slide1.png";
+      this.UserName="Please Login"
     });
   }
 
   enableMenu(loggedIn) {
     this.menu.enable(loggedIn, 'loggedInMenu');
     this.menu.enable(!loggedIn, 'loggedOutMenu');
+  }
+
+  getUserLoginstatus(){
+    console.log('in getuserlogin status method');
+    this.userData.hasLoggedIn().then((hasLoggedIn) => {
+      this.enableMenu(hasLoggedIn === true);
+      console.log('in getuserlogin status method');
+      if(hasLoggedIn){
+        console.log('has logged in');
+        this.userData.getuserData().then(data => {
+          console.log(data.full_name);
+          this.UserName = data.full_name;
+          this.usrimg = data.profile_picture;
+        })
+      }
+    });
   }
 
 }

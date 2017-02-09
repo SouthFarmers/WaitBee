@@ -33,7 +33,7 @@ export class CheckDiagnostics {
           handler: () => {}
         },
         {
-          text: 'Open Settings',
+          text: 'Settings',
           handler: () => {
             networkAlert.dismiss().then(() => {
               //this.showSettings();

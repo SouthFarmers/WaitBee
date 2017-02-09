@@ -5,7 +5,6 @@ import {Locations} from "../../providers/locations";
 import {UpdateWaitTime} from "../updateWaittime/updateWaittime";
 import {Database} from '@ionic/cloud-angular';
 import * as moment from "moment";
-import {GoogleAnalytics} from 'ionic-native';
 
 declare var google;
 @Component({
@@ -54,7 +53,6 @@ export class PropertyDetailsPage {
               public popoverCtrl: PopoverController,
               public db: Database,
               public toastCtrl: ToastController,) {
-    GoogleAnalytics.trackView("property detail Page", "", false);
     this.db.connect();
     this.placeID = navParams.get('placeid');
     this.day = new Date().getDay();
@@ -85,12 +83,14 @@ export class PropertyDetailsPage {
           this.closesnow = this.convertMilitaryTime(data.opening_hours.periods[this.day].close.time);
         }else{
           let hhnow = new Date().getHours();
+          try{
           let openingtimetemp = (data.opening_hours.periods[this.day].open.time).substring(0,2);
           if(hhnow < openingtimetemp){
             this.opensnow = this.convertMilitaryTime(data.opening_hours.periods[this.day].open.time);
           }else{
             this.opensnow = this.convertMilitaryTime(data.opening_hours.periods[this.day+1].open.time);
           }
+        }catch (ex){}
           this.waittime = "00:00";
           this.rush='0';
           this.updatedts='Closed now'
@@ -148,7 +148,6 @@ export class PropertyDetailsPage {
 }
 
   AddWaitTime() {
-    GoogleAnalytics.trackEvent("InPage", "PropertydetailPage-add-waititme", "", 1);
 if(this.openstatus) {
   let popover = this.popoverCtrl.create(UpdateWaitTime, {
     waittime: this.waittime,

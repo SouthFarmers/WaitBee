@@ -62,7 +62,6 @@ export class MapPage {
 
       let marker = new google.maps.Marker({
         map: this.maps.map,
-        animation: google.maps.Animation.DROP,
         position: latLng,
         icon: markercolor,
         iconnum: this.properties.indexOf(location)
